@@ -23,7 +23,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "button.h"
+#include "global.h"
 #include "softwareTimer.h"
+#include "fsm_button.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +37,9 @@
 /* USER CODE BEGIN PD */
 
 void display7Seg(int , _Bool );
-
+void restartSystem();
+void fsm_simple_buttons_run();
+void key_press_check();
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -93,8 +97,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, SET);
-  display7Seg(0,0);
+  restartSystem();
   HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
@@ -105,6 +108,26 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(key1PressFlag)
+	  {
+		  restartSystem();
+		  key1PressFlag = 0;
+	  }
+	  else if(key1HoldFlag)
+	  {
+		  restartSystem();
+	  }
+	  else
+	  {
+		  fsm_simple_buttons_run();
+	  }
+	  if(timer1_flag)
+	  {
+		  timer1_flag = 0;
+		  setTimer1(100);
+		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+	  }
+
   }
   /* USER CODE END 3 */
 }
@@ -203,30 +226,24 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, BUTTON_1_Pin|LED_RED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin
                           |LED7_e_Pin|LED7_f_Pin|LED7_g_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : BUTTON_1_Pin LED_RED_Pin */
-  GPIO_InitStruct.Pin = BUTTON_1_Pin|LED_RED_Pin;
+  /*Configure GPIO pins : BUTTON_1_Pin BUTTON_2_Pin BUTTON_3_Pin */
+  GPIO_InitStruct.Pin = BUTTON_1_Pin|BUTTON_2_Pin|BUTTON_3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LED_RED_Pin */
+  GPIO_InitStruct.Pin = LED_RED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : BUTTON_2_Pin */
-  GPIO_InitStruct.Pin = BUTTON_2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(BUTTON_2_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : BUTTON_3_Pin */
-  GPIO_InitStruct.Pin = BUTTON_3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BUTTON_3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED_RED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED7_a_Pin LED7_b_Pin LED7_c_Pin LED7_d_Pin
                            LED7_e_Pin LED7_f_Pin LED7_g_Pin */
@@ -240,14 +257,32 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void restartSystem()
+{
+	status = 1;
+	setTimer1(100);
+	setTimer2(100);
+	Led7SegDisplayValue = 0;
+	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, RESET);
+	display7Seg(Led7SegDisplayValue,1);
+}
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-
+	timer1Run();
+	timer2Run();
+	timer3Run();
+	getKey1Input();
+	getKey2Input();
+	getKey3Input();
 }
 
-void display7Seg(int decimalVal, _Bool status)
+void display7Seg(int decimalVal, _Bool LEDstatus)
 {
-	if(status)
+	if(decimalVal > 9)
+	{
+		decimalVal = 0;
+	}
+	if(LEDstatus)
 	{
 		HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin, (decimalVal==1||decimalVal==4) ? SET:RESET);
 		HAL_GPIO_WritePin(LED7_b_GPIO_Port, LED7_b_Pin, (decimalVal==5||decimalVal==6) ? SET:RESET);
@@ -266,6 +301,80 @@ void display7Seg(int decimalVal, _Bool status)
 		HAL_GPIO_WritePin(LED7_e_GPIO_Port, LED7_e_Pin, SET);
 		HAL_GPIO_WritePin(LED7_f_GPIO_Port, LED7_f_Pin, SET);
 		HAL_GPIO_WritePin(LED7_g_GPIO_Port, LED7_g_Pin, SET);
+	}
+}
+
+void key_press_check()
+{
+	if(key2PressFlag)
+	{
+		setTimer3(1000);
+		Led7SegDisplayValue++;
+		if(Led7SegDisplayValue > 9){Led7SegDisplayValue=0;}
+		display7Seg(Led7SegDisplayValue,1);
+		status = WAITING;
+		key2PressFlag = 0;
+	}
+	if(key3PressFlag)
+	{
+		setTimer3(1000);
+		Led7SegDisplayValue--;
+		if(Led7SegDisplayValue < 0){Led7SegDisplayValue=9;}
+		display7Seg(Led7SegDisplayValue,1);
+		status = WAITING;
+		key3PressFlag = 0;
+	}
+}
+void fsm_simple_buttons_run()
+{
+	switch (status) {
+		case RESTART_INIT:
+			key_press_check();
+			break;
+
+		case WAITING:
+			key_press_check();
+			if(timer3_flag)
+			{
+				timer3_flag = 0;
+				status = COUNTING;
+				setTimer3(1000);
+			}
+			break;
+
+		case COUNTING:
+			if(timer2_flag)
+			{
+				timer2_flag = 0;
+				if(Led7SegDisplayValue > 0){Led7SegDisplayValue--;}
+				display7Seg(Led7SegDisplayValue,1);
+				setTimer2(100);
+			}
+			key_press_check();
+			if((Led7SegDisplayValue <= 0) || (Led7SegDisplayValue > 9)){status = STOP_STATE;}
+			break;
+
+		case INC_LONG_PRESS:
+			if(key2HoldFlag == 0)
+			{
+				status = WAITING;
+				break;
+			}
+
+
+		case DEC_LONG_PRESS:
+			if(key3HoldFlag == 0)
+			{
+				status = WAITING;
+				break;
+			}
+
+
+		case STOP_STATE:
+			key_press_check();
+			break;
+		default:
+			break;
 	}
 }
 /* USER CODE END 4 */

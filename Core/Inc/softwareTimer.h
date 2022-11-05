@@ -2,13 +2,25 @@
 #define __SOFTWARE_TIMER__
 
 extern int timer1_flag;
+
+void setTimer1(int );
+
+void timer1Run();
+
+//////////////////////////////
 extern int timer2_flag;
 
-void setTimer1(int duration);
-void clearTimer1();
+void setTimer2(int );
 
-void setTimer2(int duration);
+void timer2Run();
 
-void timerRun();
+
+//////////////////////////////
+extern int timer3_flag;
+
+void setTimer3(int );
+
+void timer3Run();
+
 
 #endif
