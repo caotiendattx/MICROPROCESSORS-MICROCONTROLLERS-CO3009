@@ -262,6 +262,8 @@ void restartSystem()
 	status = 1;
 	setTimer1(100);
 	setTimer2(100);
+	setTimer3(1000);
+	setTimer4(100);
 	Led7SegDisplayValue = 0;
 	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, RESET);
 	display7Seg(Led7SegDisplayValue,1);
@@ -271,6 +273,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	timer1Run();
 	timer2Run();
 	timer3Run();
+	timer4Run();
 	getKey1Input();
 	getKey2Input();
 	getKey3Input();
@@ -324,6 +327,19 @@ void key_press_check()
 		status = WAITING;
 		key3PressFlag = 0;
 	}
+	if(key2HoldFlag)
+		{
+			setTimer3(1000);
+			display7Seg(Led7SegDisplayValue,1);
+			status = INC_LONG_PRESS;
+
+		}
+	if(key3HoldFlag)
+		{
+			setTimer3(1000);
+			display7Seg(Led7SegDisplayValue,1);
+			status = DEC_LONG_PRESS;
+		}
 }
 void fsm_simple_buttons_run()
 {
@@ -355,20 +371,39 @@ void fsm_simple_buttons_run()
 			break;
 
 		case INC_LONG_PRESS:
+			if(timer4_flag)
+			{
+				timer4_flag = 0;
+				setTimer4(100);
+				Led7SegDisplayValue++;
+				if(Led7SegDisplayValue > 9){Led7SegDisplayValue=0;}
+				display7Seg(Led7SegDisplayValue,1);
+			}
 			if(key2HoldFlag == 0)
 			{
 				status = WAITING;
+				setTimer3(1000);
 				break;
 			}
+			break;
 
 
 		case DEC_LONG_PRESS:
+			if(timer4_flag)
+			{
+				timer4_flag = 0;
+				setTimer4(100);
+				Led7SegDisplayValue--;
+				if(Led7SegDisplayValue < 0){Led7SegDisplayValue=9;}
+				display7Seg(Led7SegDisplayValue,1);
+			}
 			if(key3HoldFlag == 0)
 			{
 				status = WAITING;
+				setTimer3(1000);
 				break;
 			}
-
+			break;
 
 		case STOP_STATE:
 			key_press_check();

@@ -1,5 +1,5 @@
 #include "button.h"
-
+#include "global.h"
 
 
 int key1Reg0 = NORMAL_STATE;
@@ -90,7 +90,10 @@ void key2Press()
 }
 void key2Hold()
 {
+	Led7SegDisplayValue++;
+	if(Led7SegDisplayValue > 9){Led7SegDisplayValue=0;}
 	key2HoldFlag = 1;
+	setTimer4(100);
 }
 void key2Release()
 {
@@ -132,7 +135,8 @@ void getKey2Input()
 			timerForKey2Press++;
 			if(timerForKey2Press >= 300)
 			{
-				key2Hold();
+				if(!key2HoldFlag)
+				{key2Hold();}
 			}
 		}
 		else //Case: In the last 40ms, Read 2 accepted action: Released then Released
@@ -162,7 +166,10 @@ void key3Press()
 }
 void key3Hold()
 {
+	Led7SegDisplayValue--;
+	if(Led7SegDisplayValue < 0){Led7SegDisplayValue=9;}
 	key3HoldFlag = 1;
+	setTimer4(100);
 }
 void key3Release()
 {
@@ -204,7 +211,8 @@ void getKey3Input()
 			timerForKey3Press++;
 			if(timerForKey3Press >= 300)
 			{
-				key3Hold();
+				if(!key3HoldFlag)
+				{key3Hold();}
 			}
 		}
 		else //Case: In the last 40ms, Read 2 accepted action: Released then Released
