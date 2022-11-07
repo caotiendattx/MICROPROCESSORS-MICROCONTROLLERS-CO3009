@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+void display7Seg(int , _Bool );
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,6 +48,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -83,17 +85,22 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int counter = 0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(counter >= 10) counter = 0;
+	  	  display7Seg(counter++, 1);
+	      HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -133,8 +140,61 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin
+                          |LED7_e_Pin|LED7_f_Pin|LED7_g_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED7_a_Pin LED7_b_Pin LED7_c_Pin LED7_d_Pin
+                           LED7_e_Pin LED7_f_Pin LED7_g_Pin */
+  GPIO_InitStruct.Pin = LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin
+                          |LED7_e_Pin|LED7_f_Pin|LED7_g_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+}
+
+/* USER CODE BEGIN 4 */
+void display7Seg(int decimalVal, _Bool LEDstatus)
+{
+	if(decimalVal > 9)
+	{
+		decimalVal = 0;
+	}
+	if(LEDstatus)
+	{
+		HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin, (decimalVal==1||decimalVal==4) ? SET:RESET);
+		HAL_GPIO_WritePin(LED7_b_GPIO_Port, LED7_b_Pin, (decimalVal==5||decimalVal==6) ? SET:RESET);
+		HAL_GPIO_WritePin(LED7_c_GPIO_Port, LED7_c_Pin, (decimalVal==2) ? SET:RESET);
+		HAL_GPIO_WritePin(LED7_d_GPIO_Port, LED7_d_Pin, (decimalVal==1||decimalVal==4 || decimalVal==7) ? SET:RESET);
+		HAL_GPIO_WritePin(LED7_e_GPIO_Port, LED7_e_Pin, (decimalVal==1||decimalVal==4 || decimalVal==3 || decimalVal==5 || decimalVal==7 || decimalVal==9) ? SET:RESET);
+		HAL_GPIO_WritePin(LED7_f_GPIO_Port, LED7_f_Pin, (decimalVal==1||decimalVal==2||decimalVal==3||decimalVal==7) ? SET:RESET);
+		HAL_GPIO_WritePin(LED7_g_GPIO_Port, LED7_g_Pin, (decimalVal==0||decimalVal==1||decimalVal==7) ? SET:RESET);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin, SET);
+		HAL_GPIO_WritePin(LED7_b_GPIO_Port, LED7_b_Pin, SET);
+		HAL_GPIO_WritePin(LED7_c_GPIO_Port, LED7_c_Pin, SET);
+		HAL_GPIO_WritePin(LED7_d_GPIO_Port, LED7_d_Pin, SET);
+		HAL_GPIO_WritePin(LED7_e_GPIO_Port, LED7_e_Pin, SET);
+		HAL_GPIO_WritePin(LED7_f_GPIO_Port, LED7_f_Pin, SET);
+		HAL_GPIO_WritePin(LED7_g_GPIO_Port, LED7_g_Pin, SET);
+	}
+}
 /* USER CODE END 4 */
 
 /**
