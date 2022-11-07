@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+void displayFunct(int, int, int);
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,6 +48,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -83,17 +85,40 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int _sec = 0;
+  int _min = 0;
+  int _hour = 0;
+  displayFunct(0,0,0);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  displayFunct(_sec/5+1,_min/5+1,_hour+1);
+	 	  if(_sec >= 60)
+	 	  {
+	 		  _sec = 0;
+	 		 _min++;
+	 	  }if(_min >= 60)
+	 	  {
+	 		  _min = 0;
+	 		  _hour++;
+	 	  }
+	 	  if(_hour >= 12)
+	 	  {
+	 		 _min = 0;
+	 		 _sec = 0;
+	 		 _hour = 0;
+	 	  }
+	 	   _sec++;
+	 	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -133,8 +158,76 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, a1_Pin|a2_Pin|a3_Pin|a4_Pin
+                          |a5_Pin|a6_Pin|a7_Pin|a8_Pin
+                          |a9_Pin|a10_Pin|a11_Pin|a12_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : a1_Pin a2_Pin a3_Pin a4_Pin
+                           a5_Pin a6_Pin a7_Pin a8_Pin
+                           a9_Pin a10_Pin a11_Pin a12_Pin */
+  GPIO_InitStruct.Pin = a1_Pin|a2_Pin|a3_Pin|a4_Pin
+                          |a5_Pin|a6_Pin|a7_Pin|a8_Pin
+                          |a9_Pin|a10_Pin|a11_Pin|a12_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+}
+
+/* USER CODE BEGIN 4 */
+void displayFunct(int hr, int min, int sec)
+{
+	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, SET);
+	HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, SET);
+	HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, SET);
+	HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, SET);
+	HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, SET);
+	HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, SET);
+	HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, SET);
+	HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, SET);
+	HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, SET);
+	HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, SET);
+	HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, SET);
+	HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
+	if(hr == 1 || min == 1 || sec == 1)
+		{HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, RESET);}
+	if(hr == 2 || min == 2 || sec == 2)
+		{HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, RESET);}
+	if(hr == 3 || min == 3 || sec == 3)
+		{HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, RESET);}
+	if(hr == 4 || min == 4 || sec == 4)
+		{HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, RESET);}
+	if(hr == 5 || min == 5 || sec == 5)
+		{HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, RESET);}
+	if(hr == 6 || min == 6 || sec == 6)
+		{HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, RESET);}
+	if(hr == 7 || min == 7 || sec == 7)
+		{HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, RESET);}
+	if(hr == 8 || min == 8 || sec == 8)
+		{HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, RESET);}
+	if(hr == 9 || min == 9 || sec == 9)
+		{HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, RESET);}
+	if(hr == 10 || min == 10 || sec == 10)
+		{HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, RESET);}
+	if(hr == 11 || min == 11 || sec == 11)
+		{HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, RESET);}
+	if(hr == 12 || min == 12 || sec == 12)
+		{HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, RESET);}
+}
 /* USER CODE END 4 */
 
 /**
