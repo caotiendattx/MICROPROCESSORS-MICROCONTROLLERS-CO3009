@@ -86,39 +86,24 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  displayFunct(0,0,0);
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int _sec = 0;
-  int _min = 0;
-  int _hour = 0;
+
+  int counter = 1;
   displayFunct(0,0,0);
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  displayFunct(counter,0,0);
+	  counter++;
+	  if(counter>12){counter = 1;}
+	  HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
-	  displayFunct(_sec/5+1,_min/5+1,_hour+1);
-	 	  if(_sec >= 60)
-	 	  {
-	 		  _sec = 0;
-	 		 _min++;
-	 	  }if(_min >= 60)
-	 	  {
-	 		  _min = 0;
-	 		  _hour++;
-	 	  }
-	 	  if(_hour >= 12)
-	 	  {
-	 		 _min = 0;
-	 		 _sec = 0;
-	 		 _hour = 0;
-	 	  }
-	 	   _sec++;
-	 	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -191,42 +176,54 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void displayFunct(int hr, int min, int sec)
 {
-	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, SET);
-	HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, SET);
-	HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, SET);
-	HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, SET);
-	HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, SET);
-	HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, SET);
-	HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, SET);
-	HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, SET);
-	HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, SET);
-	HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, SET);
-	HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, SET);
-	HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
 	if(hr == 1 || min == 1 || sec == 1)
-		{HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, RESET);}
+	{HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, SET);
 	if(hr == 2 || min == 2 || sec == 2)
-		{HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, RESET);}
+			{HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, SET);
 	if(hr == 3 || min == 3 || sec == 3)
-		{HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, RESET);}
+			{HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, SET);
 	if(hr == 4 || min == 4 || sec == 4)
-		{HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, RESET);}
+			{HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, SET);
 	if(hr == 5 || min == 5 || sec == 5)
-		{HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, RESET);}
+			{HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, SET);
 	if(hr == 6 || min == 6 || sec == 6)
-		{HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, RESET);}
+			{HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, SET);
 	if(hr == 7 || min == 7 || sec == 7)
-		{HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, RESET);}
+			{HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, SET);
 	if(hr == 8 || min == 8 || sec == 8)
-		{HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, RESET);}
+			{HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, SET);
 	if(hr == 9 || min == 9 || sec == 9)
-		{HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, RESET);}
+			{HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, SET);
 	if(hr == 10 || min == 10 || sec == 10)
-		{HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, RESET);}
+			{HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, SET);
 	if(hr == 11 || min == 11 || sec == 11)
 		{HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, SET);
 	if(hr == 12 || min == 12 || sec == 12)
-		{HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, RESET);}
+			{HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, RESET);}
+	else
+	HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
 }
 /* USER CODE END 4 */
 
