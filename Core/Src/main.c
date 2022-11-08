@@ -225,6 +225,71 @@ void displayFunct(int hr, int min, int sec)
 	else
 	HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
 }
+void clearAllClock(){
+	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, SET);
+	HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, SET);
+	HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, SET);
+	HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, SET);
+	HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, SET);
+	HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, SET);
+	HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, SET);
+	HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, SET);
+	HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, SET);
+	HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, SET);
+	HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, SET);
+	HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
+}
+setNumberOnClock(int num)
+{
+		if(num == 0)
+		{HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, SET);
+		if(num == 1)
+				{HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, SET);
+		if(num == 2)
+				{HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, SET);
+		if(num == 3)
+				{HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, SET);
+		if(num == 4)
+				{HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, SET);
+		if(num == 5)
+				{HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, SET);
+		if(num == 6)
+				{HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, SET);
+		if(num == 7)
+				{HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, SET);
+		if(num == 8)
+				{HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, SET);
+		if(num == 9)
+				{HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, SET);
+		if(num == 10)
+			{HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, SET);
+		if(num == 11)
+				{HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, RESET);}
+		else
+		HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
+}
 /* USER CODE END 4 */
 
 /**
