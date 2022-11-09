@@ -11,7 +11,7 @@ void setTimer1(int duration)
 }
 void timer1Run()
 {
-	if(timer1_counter > 0)
+	if(timer1_counter >= 0)
 	{
 		timer1_counter--;
 		if(timer1_counter == 0)

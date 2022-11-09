@@ -19,10 +19,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "software_timer.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "software_timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,8 +91,9 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   setTimer1(50);
-  HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
-  HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+  HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+  HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+  HAL_GPIO_WritePin(l1_GPIO_Port, l1_Pin, RESET);
   int displayVal=1;
   /* USER CODE END 2 */
 
@@ -103,17 +104,16 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_GPIO_WritePin(l1_GPIO_Port, l1_Pin, RESET);
-	  if(timer1_flag)
+	  if(timer1_flag == 1)
 	  {
 		  timer1_flag=0;
 		  setTimer1(50);
 		  HAL_GPIO_TogglePin(EN0_GPIO_Port, EN0_Pin);
 		  HAL_GPIO_TogglePin(EN1_GPIO_Port, EN1_Pin);
 		  displayVal = (displayVal==1)?2:1;
+		  HAL_GPIO_TogglePin(l1_GPIO_Port, l1_Pin);
 	  }
 	  display7Seg(displayVal, 1);
-
   }
   /* USER CODE END 3 */
 }
