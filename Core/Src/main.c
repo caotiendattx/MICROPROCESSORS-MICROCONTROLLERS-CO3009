@@ -19,7 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "software_timer.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+void display7Seg(int , _Bool );
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -89,7 +90,10 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+  setTimer1(50);
+  HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+  HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+  int displayVal=1;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -99,6 +103,16 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  HAL_GPIO_WritePin(l1_GPIO_Port, l1_Pin, RESET);
+	  if(timer1_flag)
+	  {
+		  timer1_flag=0;
+		  setTimer1(50);
+		  HAL_GPIO_TogglePin(EN0_GPIO_Port, EN0_Pin);
+		  HAL_GPIO_TogglePin(EN1_GPIO_Port, EN1_Pin);
+		  displayVal = (displayVal==1)?2:1;
+	  }
+	  display7Seg(displayVal, 1);
 
   }
   /* USER CODE END 3 */
@@ -224,7 +238,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-
+	timer1Run();
 }
 void display7Seg(int decimalVal, _Bool LEDstatus)
 {
