@@ -237,6 +237,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+int hour = 15, minute = 8, second = 50;
+updateClockBuffer(){
+    led_buffer[0] = hour / 10;
+    led_buffer[1] = hour % 10;
+    led_buffer[2] = min / 10;
+    led_buffer[3] = min % 10;
+}
 const int MAX_LED = 4;
 int index_led = 0;
 int led_buffer[4] = {1, 2, 3, 4};
