@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
+#include "global.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int hour = 15, minute = 8, second = 50;
 /* USER CODE END 0 */
 
 /**
@@ -111,7 +112,19 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	    second++;
+		if(timer1_flag == 1)
+		{
+		    second++;
+			timer1_flag=0;
+			setTimer1(100);
+			HAL_GPIO_TogglePin(l1_GPIO_Port, l1_Pin);
+		}
+		if(timer2_flag == 1)
+		{
+			timer2_flag=0;
+			setTimer2(50);
+			update7SEG((index_led++)<4?index_led:0);
+		}
 	    if (second >= 60){
 	        second = 0;
 	        minute++;
@@ -124,7 +137,6 @@ int main(void)
 	        hour = 0;
 	    }
 	    updateClockBuffer();
-	    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -252,12 +264,12 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 int led_buffer[4] = {1, 2, 3, 4};
-int hour = 15, minute = 8, second = 50;
+
 void updateClockBuffer(){
     led_buffer[0] = hour / 10;
     led_buffer[1] = hour % 10;
-    led_buffer[2] = min / 10;
-    led_buffer[3] = min % 10;
+    led_buffer[2] = minute / 10;
+    led_buffer[3] = minute % 10;
 }
 const int MAX_LED = 4;
 int index_led = 0;
@@ -303,18 +315,6 @@ int displayVal=1;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	timer1Run();
 	timer2Run();
-	if(timer1_flag == 1)
-	{
-		timer1_flag=0;
-		setTimer1(100);
-		HAL_GPIO_TogglePin(l1_GPIO_Port, l1_Pin);
-	}
-	if(timer2_flag == 1)
-	{
-		timer2_flag=0;
-		setTimer2(50);
-		update7SEG((index_led++)<4?index_led:0);
-	}
 }
 void display7Seg(int decimalVal, _Bool LEDstatus)
 {
