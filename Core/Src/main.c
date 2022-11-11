@@ -35,6 +35,7 @@
 /* USER CODE BEGIN PD */
 void display7Seg(int , _Bool );
 void updateClockBuffer();
+void update7SEG(int );
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -60,6 +61,10 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int hour = 15, minute = 8, second = 50;
+int displayVal=1;
+const int MAX_LED = 4;
+int index_led = 0;
+int led_buffer[4] = {1, 2, 3, 4};
 /* USER CODE END 0 */
 
 /**
@@ -102,7 +107,8 @@ int main(void)
   HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
   HAL_GPIO_WritePin(l1_GPIO_Port, l1_Pin, RESET);
   display7Seg(0, 0);
-
+  updateClockBuffer();
+  update7SEG(index_led);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,16 +124,12 @@ int main(void)
 			timer1_flag=0;
 			setTimer1(100);
 			HAL_GPIO_TogglePin(l1_GPIO_Port, l1_Pin);
-		}
-		if(timer2_flag == 1)
-		{
-			timer2_flag=0;
-			setTimer2(50);
-			update7SEG((index_led++)<4?index_led:0);
+			HAL_GPIO_TogglePin(dot_GPIO_Port, dot_Pin);
 		}
 	    if (second >= 60){
 	        second = 0;
 	        minute++;
+		    updateClockBuffer();
 	    }
 	    if(minute >= 60){
 	        minute = 0;
@@ -136,7 +138,14 @@ int main(void)
 	    if(hour >=24){
 	        hour = 0;
 	    }
-	    updateClockBuffer();
+		if(timer2_flag == 1)
+		{
+			timer2_flag=0;
+			setTimer2(50);
+			index_led=(index_led<3)?(index_led + 1):0;
+			update7SEG(index_led);
+		}
+
   }
   /* USER CODE END 3 */
 }
@@ -235,17 +244,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, l1_Pin|EN0_Pin|EN1_Pin|EN2_Pin
-                          |EN3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, dot_Pin|l1_Pin|EN0_Pin|EN1_Pin
+                          |EN2_Pin|EN3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin
                           |LED7_e_Pin|LED7_f_Pin|LED7_g_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : l1_Pin EN0_Pin EN1_Pin EN2_Pin
-                           EN3_Pin */
-  GPIO_InitStruct.Pin = l1_Pin|EN0_Pin|EN1_Pin|EN2_Pin
-                          |EN3_Pin;
+  /*Configure GPIO pins : dot_Pin l1_Pin EN0_Pin EN1_Pin
+                           EN2_Pin EN3_Pin */
+  GPIO_InitStruct.Pin = dot_Pin|l1_Pin|EN0_Pin|EN1_Pin
+                          |EN2_Pin|EN3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -263,7 +272,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int led_buffer[4] = {1, 2, 3, 4};
+
 
 void updateClockBuffer(){
     led_buffer[0] = hour / 10;
@@ -271,8 +280,7 @@ void updateClockBuffer(){
     led_buffer[2] = minute / 10;
     led_buffer[3] = minute % 10;
 }
-const int MAX_LED = 4;
-int index_led = 0;
+
 void update7SEG(int index){
     switch (index){
         case 0:
@@ -311,7 +319,7 @@ void update7SEG(int index){
             break;
     }
 }
-int displayVal=1;
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	timer1Run();
 	timer2Run();
