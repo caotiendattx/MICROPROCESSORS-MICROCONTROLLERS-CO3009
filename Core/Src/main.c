@@ -282,7 +282,14 @@ int displayVal=1;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	timer1Run();
 	timer2Run();
+	if(timer1_flag == 1)
+	{
+		timer1_flag=0;
+		setTimer1(100);
+		HAL_GPIO_TogglePin(l1_GPIO_Port, l1_Pin);
+	}
 	update7SEG((index_led++)<4?index_led:0);
+
 }
 void display7Seg(int decimalVal, _Bool LEDstatus)
 {
