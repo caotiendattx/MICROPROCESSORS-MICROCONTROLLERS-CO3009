@@ -56,7 +56,7 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint16_t led_pin[13] ={a1_Pin,a1_Pin,a2_Pin,a3_Pin,a4_Pin,a5_Pin,a6_Pin,a7_Pin,a8_Pin,a9_Pin,a10_Pin,a11_Pin,a12_Pin};
 /* USER CODE END 0 */
 
 /**
@@ -102,6 +102,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(_sec%5==0)
 	  displayFunct(_sec/5+1,_min/5+1,_hour+1);
 	 	  if(_sec >= 60)
 	 	  {
@@ -192,14 +193,14 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void clearAllclock()
 {
-	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin|a2_Pin|a3_Pin|a4_Pin|p5_Pin|p6_Pin|p7_Pin|p8_Pin|p9_Pin|p10_Pin|p11_Pin|p12_Pin, SET);
+	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin|a2_Pin|a3_Pin|a4_Pin|a5_Pin|a6_Pin|a7_Pin|a8_Pin|a9_Pin|a10_Pin|a11_Pin|a12_Pin, SET);
 }
-uint16_t led_pin[12] ={a1_Pin,a2_Pin,a3_Pin,a4_Pin,a5_Pin,a6_Pin,a7_Pin,a8_Pin,a9_Pin,a10_Pin,p11_pin,p12_pin};
+
 void displayFunct(int hr, int min, int sec)
 {
 	clearAllclock();
 	HAL_GPIO_WritePin(a1_GPIO_Port, led_pin[hr]|led_pin[min]|led_pin[sec], RESET);
-	}
+}
 /* USER CODE END 4 */
 
 /**
