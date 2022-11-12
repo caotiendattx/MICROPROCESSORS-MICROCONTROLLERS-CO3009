@@ -33,6 +33,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 void displayFunct(int, int, int);
+void clearAllclock();
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -189,45 +190,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void clearAllclock()
+{
+	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin|a2_Pin|a3_pin|a4_pin|p5_pin|p6_pin|p7_pin|p8_pin|p9_pin|p10_pin|p11_pin|p12_pin, SET);
+}
+unit16_t led_pin[12] ={a1_Pin,a2_Pin,a3_pin,a4_pin,p5_pin,p6_pin,p7_pin,p8_pin,p9_pin,p10_pin,p11_pin,p12_pin};
 void displayFunct(int hr, int min, int sec)
 {
-	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, SET);
-	HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, SET);
-	HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, SET);
-	HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, SET);
-	HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, SET);
-	HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, SET);
-	HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, SET);
-	HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, SET);
-	HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, SET);
-	HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, SET);
-	HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, SET);
-	HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, SET);
-	if(hr == 1 || min == 1 || sec == 1)
-		{HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin, RESET);}
-	if(hr == 2 || min == 2 || sec == 2)
-		{HAL_GPIO_WritePin(a2_GPIO_Port, a2_Pin, RESET);}
-	if(hr == 3 || min == 3 || sec == 3)
-		{HAL_GPIO_WritePin(a3_GPIO_Port, a3_Pin, RESET);}
-	if(hr == 4 || min == 4 || sec == 4)
-		{HAL_GPIO_WritePin(a4_GPIO_Port, a4_Pin, RESET);}
-	if(hr == 5 || min == 5 || sec == 5)
-		{HAL_GPIO_WritePin(a5_GPIO_Port, a5_Pin, RESET);}
-	if(hr == 6 || min == 6 || sec == 6)
-		{HAL_GPIO_WritePin(a6_GPIO_Port, a6_Pin, RESET);}
-	if(hr == 7 || min == 7 || sec == 7)
-		{HAL_GPIO_WritePin(a7_GPIO_Port, a7_Pin, RESET);}
-	if(hr == 8 || min == 8 || sec == 8)
-		{HAL_GPIO_WritePin(a8_GPIO_Port, a8_Pin, RESET);}
-	if(hr == 9 || min == 9 || sec == 9)
-		{HAL_GPIO_WritePin(a9_GPIO_Port, a9_Pin, RESET);}
-	if(hr == 10 || min == 10 || sec == 10)
-		{HAL_GPIO_WritePin(a10_GPIO_Port, a10_Pin, RESET);}
-	if(hr == 11 || min == 11 || sec == 11)
-		{HAL_GPIO_WritePin(a11_GPIO_Port, a11_Pin, RESET);}
-	if(hr == 12 || min == 12 || sec == 12)
-		{HAL_GPIO_WritePin(a12_GPIO_Port, a12_Pin, RESET);}
-}
+	clearAllclock();
+	HAL_GPIO_WritePin(a1_GPIO_Port, led_pin[hr]|led_pin[min]|led_pin[sec], RESET);
+	}
 /* USER CODE END 4 */
 
 /**
