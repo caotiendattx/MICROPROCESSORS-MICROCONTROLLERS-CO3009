@@ -192,9 +192,9 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void clearAllclock()
 {
-	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin|a2_Pin|a3_pin|a4_pin|p5_pin|p6_pin|p7_pin|p8_pin|p9_pin|p10_pin|p11_pin|p12_pin, SET);
+	HAL_GPIO_WritePin(a1_GPIO_Port, a1_Pin|a2_Pin|a3_Pin|a4_Pin|p5_Pin|p6_Pin|p7_Pin|p8_Pin|p9_Pin|p10_Pin|p11_Pin|p12_Pin, SET);
 }
-unit16_t led_pin[12] ={a1_Pin,a2_Pin,a3_pin,a4_pin,p5_pin,p6_pin,p7_pin,p8_pin,p9_pin,p10_pin,p11_pin,p12_pin};
+uint16_t led_pin[12] ={a1_Pin,a2_Pin,a3_Pin,a4_Pin,a5_Pin,a6_Pin,a7_Pin,a8_Pin,a9_Pin,a10_Pin,p11_pin,p12_pin};
 void displayFunct(int hr, int min, int sec)
 {
 	clearAllclock();
