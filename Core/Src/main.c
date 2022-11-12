@@ -34,6 +34,8 @@
 /* USER CODE BEGIN PD */
 void display7Seg(int , _Bool );
 void display7Seg_2(int , _Bool );
+void clearAll7Seg_1();
+void clearAll7Seg_2();
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -144,14 +146,14 @@ int main(void)
   		default:
   			break;
   	}
-    	display7Seg(counter_2, 1);
+  	  	counter_2--;
+  		counter_3--;
+  	  	display7Seg(counter_2, 1);
     	display7Seg_2(counter_3, 1);
-  	  counter++;
-  	  if(counter == 10){counter = 0;}
-  	counter_2--;
-  	counter_3--;
+    	counter++;
+    	if(counter == 10){counter = 0;}
 
-  	HAL_Delay(1000);
+    	HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -239,6 +241,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void clearAll7Seg_1()
+{
+	HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin|LED7_e_Pin|LED7_f_Pin|LED7_g_Pin, SET);
+}
 void display7Seg(int decimalVal, _Bool LEDstatus)
 {
 	if(decimalVal > 9)
@@ -257,14 +263,12 @@ void display7Seg(int decimalVal, _Bool LEDstatus)
 	}
 	else
 	{
-		HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin, SET);
-		HAL_GPIO_WritePin(LED7_b_GPIO_Port, LED7_b_Pin, SET);
-		HAL_GPIO_WritePin(LED7_c_GPIO_Port, LED7_c_Pin, SET);
-		HAL_GPIO_WritePin(LED7_d_GPIO_Port, LED7_d_Pin, SET);
-		HAL_GPIO_WritePin(LED7_e_GPIO_Port, LED7_e_Pin, SET);
-		HAL_GPIO_WritePin(LED7_f_GPIO_Port, LED7_f_Pin, SET);
-		HAL_GPIO_WritePin(LED7_g_GPIO_Port, LED7_g_Pin, SET);
+		clearAll7Seg_1();
 	}
+}
+void clearAll7Seg_2()
+{
+	HAL_GPIO_WritePin(LED7_1_GPIO_Port, LED7_1_Pin|LED7_2_Pin|LED7_3_Pin|LED7_4_Pin|LED7_5_Pin|LED7_6_Pin|LED7_7_Pin, SET);
 }
 void display7Seg_2(int decimalVal, _Bool LEDstatus)
 {
@@ -284,13 +288,7 @@ void display7Seg_2(int decimalVal, _Bool LEDstatus)
 	}
 	else
 	{
-		HAL_GPIO_WritePin(LED7_1_GPIO_Port, LED7_1_Pin, SET);
-		HAL_GPIO_WritePin(LED7_2_GPIO_Port, LED7_2_Pin, SET);
-		HAL_GPIO_WritePin(LED7_3_GPIO_Port, LED7_3_Pin, SET);
-		HAL_GPIO_WritePin(LED7_4_GPIO_Port, LED7_4_Pin, SET);
-		HAL_GPIO_WritePin(LED7_5_GPIO_Port, LED7_5_Pin, SET);
-		HAL_GPIO_WritePin(LED7_6_GPIO_Port, LED7_6_Pin, SET);
-		HAL_GPIO_WritePin(LED7_7_GPIO_Port, LED7_7_Pin, SET);
+		clearAll7Seg_2();
 	}
 }
 /* USER CODE END 4 */
