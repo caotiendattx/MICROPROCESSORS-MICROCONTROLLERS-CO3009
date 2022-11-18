@@ -126,10 +126,11 @@ int main(void)
 			HAL_GPIO_TogglePin(l1_GPIO_Port, l1_Pin);
 			HAL_GPIO_TogglePin(dot_GPIO_Port, dot_Pin);
 		}
+
 	    if (second >= 60){
 	        second = 0;
 	        minute++;
-		    updateClockBuffer();
+
 	    }
 	    if(minute >= 60){
 	        minute = 0;
@@ -145,6 +146,7 @@ int main(void)
 			index_led=(index_led<3)?(index_led + 1):0;
 			update7SEG(index_led);
 		}
+	    updateClockBuffer();
 
   }
   /* USER CODE END 3 */
