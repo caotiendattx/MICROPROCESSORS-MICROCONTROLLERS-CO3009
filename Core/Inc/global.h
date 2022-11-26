@@ -8,15 +8,13 @@
 #ifndef INC_GLOBAL_H_
 #define INC_GLOBAL_H_
 
-#define RESTART_INIT 1
-#define WAITING 2
-#define COUNTING 3
-#define INC_LONG_PRESS 4
-#define DEC_LONG_PRESS 5
-#define STOP_STATE 6
+#define NORMAL_MODE 1
+#define MODE_2 2
+#define MODE_3 3
+#define MODE_4 4
+#define MODE_2_1 5
+#define MODE_3_1 6
+#define MODE_4_1 7
 
-
-extern int status;
-extern int Led7SegDisplayValue;
 
 #endif /* INC_GLOBAL_H_ */

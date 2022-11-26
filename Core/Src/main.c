@@ -38,7 +38,6 @@
 
 void display7Seg(int , _Bool );
 void restartSystem();
-void fsm_simple_buttons_run();
 void key_press_check();
 /* USER CODE END PD */
 
@@ -108,25 +107,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(key1PressFlag)
-	  {
-		  restartSystem();
-		  key1PressFlag = 0;
-	  }
-	  else if(key1HoldFlag)
-	  {
-		  restartSystem();
-	  }
-	  else
-	  {
-		  fsm_simple_buttons_run();
-	  }
-	  if(timer1_flag)
-	  {
-		  timer1_flag = 0;
-		  setTimer1(100);
-		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-	  }
+
 
   }
   /* USER CODE END 3 */
@@ -152,6 +133,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -226,29 +208,37 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, led_green_1_Pin|led_yellow_1_Pin|led_green_2_Pin|led_7_e_1_Pin
+                          |led_7_d_1_Pin|led_7_c_1_Pin|led_7_b_1_Pin|led7_a_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin
-                          |LED7_e_Pin|LED7_f_Pin|LED7_g_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, led_yellow_2_Pin|led_red_2_Pin|led_7_g_1_Pin|led_7_f_1_Pin
+                          |GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : BUTTON_1_Pin BUTTON_2_Pin BUTTON_3_Pin */
-  GPIO_InitStruct.Pin = BUTTON_1_Pin|BUTTON_2_Pin|BUTTON_3_Pin;
+  /*Configure GPIO pins : btn1_Pin btn2_Pin btn3_Pin */
+  GPIO_InitStruct.Pin = btn1_Pin|btn2_Pin|btn3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LED_RED_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin;
+  /*Configure GPIO pins : led_green_1_Pin led_yellow_1_Pin led_green_2_Pin led_7_e_1_Pin
+                           led_7_d_1_Pin led_7_c_1_Pin led_7_b_1_Pin led7_a_1_Pin */
+  GPIO_InitStruct.Pin = led_green_1_Pin|led_yellow_1_Pin|led_green_2_Pin|led_7_e_1_Pin
+                          |led_7_d_1_Pin|led_7_c_1_Pin|led_7_b_1_Pin|led7_a_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_RED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED7_a_Pin LED7_b_Pin LED7_c_Pin LED7_d_Pin
-                           LED7_e_Pin LED7_f_Pin LED7_g_Pin */
-  GPIO_InitStruct.Pin = LED7_a_Pin|LED7_b_Pin|LED7_c_Pin|LED7_d_Pin
-                          |LED7_e_Pin|LED7_f_Pin|LED7_g_Pin;
+  /*Configure GPIO pin : led_red_1_Pin */
+  GPIO_InitStruct.Pin = led_red_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  HAL_GPIO_Init(led_red_1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : led_yellow_2_Pin led_red_2_Pin led_7_g_1_Pin led_7_f_1_Pin
+                           PB5 PB6 */
+  GPIO_InitStruct.Pin = led_yellow_2_Pin|led_red_2_Pin|led_7_g_1_Pin|led_7_f_1_Pin
+                          |GPIO_PIN_5|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -279,33 +269,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	getKey3Input();
 }
 
-void display7Seg(int decimalVal, _Bool LEDstatus)
-{
-	if(decimalVal > 9)
-	{
-		decimalVal = 0;
-	}
-	if(LEDstatus)
-	{
-		HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin, (decimalVal==1||decimalVal==4) ? SET:RESET);
-		HAL_GPIO_WritePin(LED7_b_GPIO_Port, LED7_b_Pin, (decimalVal==5||decimalVal==6) ? SET:RESET);
-		HAL_GPIO_WritePin(LED7_c_GPIO_Port, LED7_c_Pin, (decimalVal==2) ? SET:RESET);
-		HAL_GPIO_WritePin(LED7_d_GPIO_Port, LED7_d_Pin, (decimalVal==1||decimalVal==4 || decimalVal==7) ? SET:RESET);
-		HAL_GPIO_WritePin(LED7_e_GPIO_Port, LED7_e_Pin, (decimalVal==1||decimalVal==4 || decimalVal==3 || decimalVal==5 || decimalVal==7 || decimalVal==9) ? SET:RESET);
-		HAL_GPIO_WritePin(LED7_f_GPIO_Port, LED7_f_Pin, (decimalVal==1||decimalVal==2||decimalVal==3||decimalVal==7) ? SET:RESET);
-		HAL_GPIO_WritePin(LED7_g_GPIO_Port, LED7_g_Pin, (decimalVal==0||decimalVal==1||decimalVal==7) ? SET:RESET);
-	}
-	else
-	{
-		HAL_GPIO_WritePin(LED7_a_GPIO_Port, LED7_a_Pin, SET);
-		HAL_GPIO_WritePin(LED7_b_GPIO_Port, LED7_b_Pin, SET);
-		HAL_GPIO_WritePin(LED7_c_GPIO_Port, LED7_c_Pin, SET);
-		HAL_GPIO_WritePin(LED7_d_GPIO_Port, LED7_d_Pin, SET);
-		HAL_GPIO_WritePin(LED7_e_GPIO_Port, LED7_e_Pin, SET);
-		HAL_GPIO_WritePin(LED7_f_GPIO_Port, LED7_f_Pin, SET);
-		HAL_GPIO_WritePin(LED7_g_GPIO_Port, LED7_g_Pin, SET);
-	}
-}
+
 
 void key_press_check()
 {
@@ -318,28 +282,7 @@ void key_press_check()
 		status = WAITING;
 		key2PressFlag = 0;
 	}
-	if(key3PressFlag)
-	{
-		setTimer3(1000);
-		Led7SegDisplayValue--;
-		if(Led7SegDisplayValue < 0){Led7SegDisplayValue=9;}
-		display7Seg(Led7SegDisplayValue,1);
-		status = WAITING;
-		key3PressFlag = 0;
-	}
-	if(key2HoldFlag)
-		{
-			setTimer3(1000);
-			display7Seg(Led7SegDisplayValue,1);
-			status = INC_LONG_PRESS;
 
-		}
-	if(key3HoldFlag)
-		{
-			setTimer3(1000);
-			display7Seg(Led7SegDisplayValue,1);
-			status = DEC_LONG_PRESS;
-		}
 }
 /* USER CODE END 4 */
 
@@ -374,5 +317,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

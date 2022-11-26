@@ -1,7 +1,6 @@
 #include "button.h"
 #include "global.h"
 
-
 int key1Reg0 = NORMAL_STATE;
 int key1Reg1 = NORMAL_STATE;
 int key1Reg2 = NORMAL_STATE;

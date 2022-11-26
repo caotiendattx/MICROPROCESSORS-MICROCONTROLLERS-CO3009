@@ -58,28 +58,38 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BUTTON_1_Pin GPIO_PIN_2
-#define BUTTON_1_GPIO_Port GPIOA
-#define BUTTON_2_Pin GPIO_PIN_3
-#define BUTTON_2_GPIO_Port GPIOA
-#define BUTTON_3_Pin GPIO_PIN_4
-#define BUTTON_3_GPIO_Port GPIOA
-#define LED_RED_Pin GPIO_PIN_5
-#define LED_RED_GPIO_Port GPIOA
-#define LED7_a_Pin GPIO_PIN_0
-#define LED7_a_GPIO_Port GPIOB
-#define LED7_b_Pin GPIO_PIN_1
-#define LED7_b_GPIO_Port GPIOB
-#define LED7_c_Pin GPIO_PIN_2
-#define LED7_c_GPIO_Port GPIOB
-#define LED7_d_Pin GPIO_PIN_3
-#define LED7_d_GPIO_Port GPIOB
-#define LED7_e_Pin GPIO_PIN_4
-#define LED7_e_GPIO_Port GPIOB
-#define LED7_f_Pin GPIO_PIN_5
-#define LED7_f_GPIO_Port GPIOB
-#define LED7_g_Pin GPIO_PIN_6
-#define LED7_g_GPIO_Port GPIOB
+#define btn1_Pin GPIO_PIN_1
+#define btn1_GPIO_Port GPIOA
+#define btn2_Pin GPIO_PIN_2
+#define btn2_GPIO_Port GPIOA
+#define btn3_Pin GPIO_PIN_3
+#define btn3_GPIO_Port GPIOA
+#define led_green_1_Pin GPIO_PIN_4
+#define led_green_1_GPIO_Port GPIOA
+#define led_yellow_1_Pin GPIO_PIN_5
+#define led_yellow_1_GPIO_Port GPIOA
+#define led_red_1_Pin GPIO_PIN_6
+#define led_red_1_GPIO_Port GPIOA
+#define led_green_2_Pin GPIO_PIN_7
+#define led_green_2_GPIO_Port GPIOA
+#define led_yellow_2_Pin GPIO_PIN_0
+#define led_yellow_2_GPIO_Port GPIOB
+#define led_red_2_Pin GPIO_PIN_1
+#define led_red_2_GPIO_Port GPIOB
+#define led_7_g_1_Pin GPIO_PIN_14
+#define led_7_g_1_GPIO_Port GPIOB
+#define led_7_f_1_Pin GPIO_PIN_15
+#define led_7_f_1_GPIO_Port GPIOB
+#define led_7_e_1_Pin GPIO_PIN_8
+#define led_7_e_1_GPIO_Port GPIOA
+#define led_7_d_1_Pin GPIO_PIN_9
+#define led_7_d_1_GPIO_Port GPIOA
+#define led_7_c_1_Pin GPIO_PIN_10
+#define led_7_c_1_GPIO_Port GPIOA
+#define led_7_b_1_Pin GPIO_PIN_11
+#define led_7_b_1_GPIO_Port GPIOA
+#define led7_a_1_Pin GPIO_PIN_12
+#define led7_a_1_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -89,5 +99,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
