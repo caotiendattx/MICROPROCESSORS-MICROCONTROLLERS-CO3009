@@ -1,12 +1,5 @@
-button.c:15:6:key1Press	4	static
-button.c:19:6:key1Hold	4	static
-button.c:23:6:key1Release	4	static
-button.c:29:6:getKey1Input	8	static
-button.c:87:6:key2Press	4	static
-button.c:91:6:key2Hold	8	static
-button.c:98:6:key2Release	4	static
-button.c:104:6:getKey2Input	8	static
-button.c:163:6:key3Press	4	static
-button.c:167:6:key3Hold	8	static
-button.c:174:6:key3Release	4	static
-button.c:180:6:getKey3Input	8	static
+../Core/Src/button.c:22:6:init_button	16	static
+../Core/Src/button.c:36:6:keyPress	16	static
+../Core/Src/button.c:40:6:keyHold	16	static
+../Core/Src/button.c:44:6:keyRelease	16	static
+../Core/Src/button.c:50:6:getKeyInput	16	static
