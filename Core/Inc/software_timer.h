@@ -13,7 +13,7 @@
 int timer_flag[no_of_timers] = {0};
 int timer_counter[no_of_timers] = {0};
 
-const int time_const = 10;
+const int time_const = 1;
 
 void setTimer(int duration, int indx)
 {

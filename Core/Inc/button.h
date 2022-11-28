@@ -67,7 +67,6 @@ void getKeyInput(int indx)
 			keyReg[indx][3] = keyReg[indx][2];
 			if(timerForKeyPress[indx] < 300)
 			{
-
 				keyPress(indx);
 				timerForKeyPress[indx] = 0;
 			}

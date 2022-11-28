@@ -1,5 +1,0 @@
-../Core/Src/button.c:22:6:init_button	16	static
-../Core/Src/button.c:36:6:keyPress	16	static
-../Core/Src/button.c:40:6:keyHold	16	static
-../Core/Src/button.c:44:6:keyRelease	16	static
-../Core/Src/button.c:50:6:getKeyInput	16	static
