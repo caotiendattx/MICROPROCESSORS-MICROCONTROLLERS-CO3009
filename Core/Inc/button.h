@@ -8,93 +8,30 @@
 #ifndef INC_BUTTON_H_
 #define INC_BUTTON_H_
 
-#include "global.h"
+#include "main.h"
+#define no_of_btn 3
+#define NORMAL_STATE GPIO_PIN_SET
+#define PRESSED_STATE GPIO_PIN_RESET
 
 
 
-int keyReg[no_of_btn][4];
+extern int keyReg[no_of_btn][4];
 
-int timerForKeyPress[no_of_btn];
+extern int timerForKeyPress[no_of_btn];
 
-int keyPressFlag[no_of_btn] = {0};
-int keyHoldFlag[no_of_btn] = {0};
-
-
-uint16_t button_map[no_of_btn] = {GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3};
+extern int keyPressFlag[no_of_btn];
+extern int keyHoldFlag[no_of_btn];
 
 
-void init_button(int indx)
-{
-	keyPressFlag[indx] = 0;
-	keyHoldFlag[indx] = 0;
-	timerForKeyPress[indx] = 0;
-	keyReg[indx][0] = NORMAL_STATE;
-	keyReg[indx][1] = NORMAL_STATE;
-	keyReg[indx][2] = NORMAL_STATE;
-	keyReg[indx][3] = NORMAL_STATE;
-}
+extern uint16_t button_map[no_of_btn];
 
 
-void keyPress(int indx)
-{
-	keyPressFlag[indx] = 1;
-}
-void keyHold(int indx)
-{
-	keyHoldFlag[indx] = 1;
-}
-void keyRelease(int indx)
-{
-	timerForKeyPress[indx] = 0;
-	keyHoldFlag[indx] = 0;
-}
+void init_button(int indx);
 
-void getKeyInput(int indx)
-{
-	keyReg[indx][0] = keyReg[indx][1];
-	keyReg[indx][1] = keyReg[indx][2];
-	keyReg[indx][2] = HAL_GPIO_ReadPin(btn1_GPIO_Port, button_map[indx]);
-	// Only care about non-bounce
-	if((keyReg[indx][0] == keyReg[indx][1]) && (keyReg[indx][1] == keyReg[indx][2]))
-	{
-		if((keyReg[indx][3] == NORMAL_STATE) && (keyReg[indx][1]  == PRESSED_STATE))//Case: In the last 40ms, Read 2 accepted action: Released then Pressed
-		{
-			keyReg[indx][3] = keyReg[indx][2];
-			timerForKeyPress[indx] = 2; //
-		}
-		else if((keyReg[indx][3] == PRESSED_STATE) && (keyReg[indx][1] == NORMAL_STATE))// Case: In the last 40ms, Read 2 accepted action: Pressed then Released
-		{
-			keyReg[indx][3] = keyReg[indx][2];
-			if(timerForKeyPress[indx] < 300)
-			{
-				keyPress(indx);
-				timerForKeyPress[indx] = 0;
-			}
-			else
-			{
-				keyRelease(indx);
-				timerForKeyPress[indx] = 0;
-			}
-		}
-		else if((keyReg[indx][3] == PRESSED_STATE) && (keyReg[indx][1] == PRESSED_STATE))//Case: In the last 40ms, Read 2 accepted action: Pressed then Pressed
-		{
-			keyReg[indx][3] = keyReg[indx][2];
-			timerForKeyPress[indx]++;
-			if(timerForKeyPress[indx] >= 300)
-			{
-				keyHold(indx);
-			}
-		}
-		else //Case: In the last 40ms, Read 2 accepted action: Released then Released
-		{
-			keyReg[indx][3] = keyReg[indx][2];
-			timerForKeyPress[indx] = 0;
-			keyHoldFlag[indx] = 0;
-			keyPressFlag[indx] = 0;
-		}
-	}
-}
+void keyPress(int indx);
+void keyHold(int indx);
+void keyRelease(int indx);
 
-
+void getKeyInput(int indx);
 
 #endif /* INC_BUTTON_H_ */

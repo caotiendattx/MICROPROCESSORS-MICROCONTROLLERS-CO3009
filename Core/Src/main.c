@@ -22,7 +22,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include"button.h"
-#include"global.h"
 #include"software_timer.h"
 /* USER CODE END Includes */
 
@@ -33,25 +32,27 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+int current_fsm_state = 0;
+#define NORMAL_MODE 0
+#define MODE_2 	1
+#define MODE_3 	2
+#define MODE_4 	3
+int led_scan_counter = 0;
+
+int traffic_state = 0;
+
+int time_red = 1000;
+int time_yellow = 300;
+int time_green = 700;
 void display7Seg(int );
 void custom_system_init();
 void fsm_traffic_master();
 void clear_led();
-void key_press_check();
 void setting_led_controller(int);
 void timer_2_logic();
 void traffic_state_controller();
 extern int current_fsm_state;
 void led_controller();
-extern int keyPressFlag[];
-extern int keyHoldFlag[];
-extern int timer_flag[];
-extern int timer_counter[];
-extern int led_scan_counter;
-extern int traffic_state;
-extern int time_red;
-extern int time_yellow;
-extern int time_green;
 int display_val1;
 int display_val2;
 /* USER CODE END PD */
@@ -288,12 +289,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	getKeyInput(2);
 
 }
-void clear_led()
-{
-	HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|yellow1_Pin|red1_Pin|red2_Pin, SET);
-	HAL_GPIO_WritePin(green2_GPIO_Port,green2_Pin|yellow2_Pin, SET);
-}
-void key_press_check()
+
+
+void fsm_traffic_master()
 {
 	  if(keyPressFlag[0])
 	  {
@@ -301,24 +299,20 @@ void key_press_check()
 		  current_fsm_state +=1;
 		  if(current_fsm_state > 3)current_fsm_state=0;
 		  keyPressFlag[0] = 0;
-	  }else if(keyPressFlag[2])
-	  {
-		  current_fsm_state = NORMAL_MODE;
-		  keyPressFlag[2] = 0;
-		  custom_system_init();
 	  }
-}
-void fsm_traffic_master()
-{
 	switch (current_fsm_state) {
-		case NORMAL_MODE:
+		case NORMAL_MODE: // SCAN 7SEG, CONTROLL Traffic Status, Chech for Input Key
 		  led_controller();
 		  traffic_state_controller();
 		  timer_2_logic();
-		  key_press_check();
 			break;
 		case MODE_2:
-			key_press_check();
+			if(keyPressFlag[2])
+				  {
+					  current_fsm_state = NORMAL_MODE;
+					  keyPressFlag[2] = 0;
+					  custom_system_init();
+				  }
 			setting_led_controller(current_fsm_state);
 			if(keyPressFlag[1])
 			{
@@ -335,7 +329,12 @@ void fsm_traffic_master()
 			}
 			break;
 		case MODE_3:
-			key_press_check();
+			if(keyPressFlag[2])
+				  {
+					  current_fsm_state = NORMAL_MODE;
+					  keyPressFlag[2] = 0;
+					  custom_system_init();
+				  }
 			setting_led_controller(current_fsm_state);
 			if(keyPressFlag[1])
 			{
@@ -352,7 +351,12 @@ void fsm_traffic_master()
 			}
 			break;
 		case MODE_4:
-			key_press_check();
+			if(keyPressFlag[2])
+				  {
+					  current_fsm_state = NORMAL_MODE;
+					  keyPressFlag[2] = 0;
+					  custom_system_init();
+				  }
 			setting_led_controller(current_fsm_state);
 			if(keyPressFlag[1])
 			{
@@ -372,7 +376,7 @@ void fsm_traffic_master()
 			break;
 	}
 }
-void timer_2_logic()
+void timer_2_logic() // 1 second general timer
 {
 	if(timer_flag[2])
 	{
@@ -381,7 +385,7 @@ void timer_2_logic()
 		setTimer(100,2);
 	}
 }
-void traffic_state_controller()
+void traffic_state_controller() // Control the traffic light state and update 7Seg Value
 {
 	if(timer_flag[1])
 		{
@@ -498,7 +502,12 @@ void setting_led_controller(int mode)
 			setTimer(25,0);
 		}
 }
-void led_controller()
+void clear_led() // Traffic LED OFF
+{
+	HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|yellow1_Pin|red1_Pin|red2_Pin, SET);
+	HAL_GPIO_WritePin(green2_GPIO_Port,green2_Pin|yellow2_Pin, SET);
+}
+void led_controller() // SCAN The 4 7SEG at speed of 2HZ
 {
 	if(timer_flag[0])
 	{
@@ -535,7 +544,7 @@ void led_controller()
 		setTimer(25,0);
 	}
 }
-void display7Seg(int decimalVal)
+void display7Seg(int decimalVal) // DECIMAL to 7SEG Config Signal
 {
 	if(decimalVal > 9) decimalVal = 0;
 		HAL_GPIO_WritePin(a_GPIO_Port, a_Pin, (decimalVal==1||decimalVal==4) ? SET:RESET);
