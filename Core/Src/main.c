@@ -51,7 +51,12 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-
+void funct1();
+void funct2();
+void funct3();
+void funct4();
+void funct5();
+void funct6();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -88,7 +93,16 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start_IT(&htim2);
+  SCH_Init();
+  SCH_Add_Task(funct1,100, 10);
+  SCH_Add_Task(funct2,200, 20);
+  SCH_Add_Task(funct3,300, 30);
+  SCH_Add_Task(funct4,400, 40);
+  SCH_Add_Task(funct5,500, 50);
+  SCH_Add_Task(funct6,600, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -98,6 +112,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  SCH_Dispatch_Tasks();
+
   }
   /* USER CODE END 3 */
 }
@@ -239,6 +255,30 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	SCH_Update();
 
+}
+void funct1()
+{
+	HAL_GPIO_TogglePin(a_GPIO_Port, a_Pin);
+}
+void funct2()
+{
+	HAL_GPIO_TogglePin(b_GPIO_Port, b_Pin);
+}
+void funct3()
+{
+	HAL_GPIO_TogglePin(c_GPIO_Port, c_Pin);
+}
+void funct4()
+{
+	HAL_GPIO_TogglePin(d_GPIO_Port, d_Pin);
+}
+void funct5()
+{
+	HAL_GPIO_TogglePin(e_GPIO_Port, e_Pin);
+}
+void funct6()
+{
+	HAL_GPIO_TogglePin(f_GPIO_Port, f_Pin);
 }
 /* USER CODE END 4 */
 
