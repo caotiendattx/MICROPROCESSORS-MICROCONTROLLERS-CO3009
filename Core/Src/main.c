@@ -21,9 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include"button.h"
-#include"global.h"
-#include"software_timer.h"
+#include"scheduler.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,27 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-void display7Seg(int );
-void custom_system_init();
-void fsm_traffic_master();
-void clear_led();
-void key_press_check();
-void setting_led_controller(int);
-void timer_2_logic();
-void traffic_state_controller();
-extern int current_fsm_state;
-void led_controller();
-extern int keyPressFlag[];
-extern int keyHoldFlag[];
-extern int timer_flag[];
-extern int timer_counter[];
-extern int led_scan_counter;
-extern int traffic_state;
-extern int time_red;
-extern int time_yellow;
-extern int time_green;
-int display_val1;
-int display_val2;
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -111,7 +89,6 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  custom_system_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,7 +98,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		fsm_traffic_master();
   }
   /* USER CODE END 3 */
 }
@@ -258,293 +234,11 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void custom_system_init()
-{
-	  traffic_state = 0;
-	  display_val1 = time_green/100;
-	  display_val2 = time_red/100;
-	  timer_flag[0] = 1; // LED SCAN
-	  timer_flag[1] = 1; //TRAFFIC TIME
-	  timer_flag[2] = 0;
-	  timer_flag[3] = 1;
-	  setTimer(100,2); // 1 Second General
-	  setTimer(25,3);
-	  led_scan_counter = 0;
-	  HAL_TIM_Base_Start_IT (& htim2 );
-	  current_fsm_state = 0;
-	  init_button(0);
-	  init_button(1);
-	  init_button(2);
 
-}
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	timerRun(0); //LED SCAN
-	timerRun(1); //Traffic Time
-	timerRun(2);  // 1 second general
-	timerRun(3); //2HZ Blinky
-	getKeyInput(0);
-	getKeyInput(1);
-	getKeyInput(2);
+	SCH_Update();
 
-}
-void clear_led()
-{
-	HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|yellow1_Pin|red1_Pin|red2_Pin, SET);
-	HAL_GPIO_WritePin(green2_GPIO_Port,green2_Pin|yellow2_Pin, SET);
-}
-void key_press_check()
-{
-	  if(keyPressFlag[0])
-	  {
-		  clear_led();
-		  current_fsm_state +=1;
-		  if(current_fsm_state > 3)current_fsm_state=0;
-		  keyPressFlag[0] = 0;
-	  }else if(keyPressFlag[2])
-	  {
-		  current_fsm_state = NORMAL_MODE;
-		  keyPressFlag[2] = 0;
-		  custom_system_init();
-	  }
-}
-void fsm_traffic_master()
-{
-	switch (current_fsm_state) {
-		case NORMAL_MODE:
-		  led_controller();
-		  traffic_state_controller();
-		  timer_2_logic();
-		  key_press_check();
-			break;
-		case MODE_2:
-			key_press_check();
-			setting_led_controller(current_fsm_state);
-			if(keyPressFlag[1])
-			{
-				time_red = time_red + 100;
-				keyPressFlag[1] = 0;
-			}
-			if(timer_flag[3])//Blinky led
-			{
-				HAL_GPIO_TogglePin(red1_GPIO_Port, red1_Pin);
-				HAL_GPIO_TogglePin(red2_GPIO_Port, red2_Pin);
-				HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|yellow1_Pin, SET);
-				HAL_GPIO_WritePin(green2_GPIO_Port, green2_Pin|yellow2_Pin, SET);
-				setTimer(25,3);
-			}
-			break;
-		case MODE_3:
-			key_press_check();
-			setting_led_controller(current_fsm_state);
-			if(keyPressFlag[1])
-			{
-				time_yellow = time_yellow + 100;
-				keyPressFlag[1] = 0;
-			}
-			if(timer_flag[3])
-			{
-				HAL_GPIO_TogglePin(yellow1_GPIO_Port, yellow1_Pin);
-				HAL_GPIO_TogglePin(yellow2_GPIO_Port, yellow2_Pin);
-				HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|red1_Pin|red2_Pin, SET);
-				HAL_GPIO_WritePin(green2_GPIO_Port,green2_Pin, SET);
-				setTimer(25,3);
-			}
-			break;
-		case MODE_4:
-			key_press_check();
-			setting_led_controller(current_fsm_state);
-			if(keyPressFlag[1])
-			{
-				time_green = time_green + 100;
-				keyPressFlag[1] = 0;
-			}
-			if(timer_flag[3])
-			{
-				HAL_GPIO_TogglePin(green1_GPIO_Port, green1_Pin);
-				HAL_GPIO_TogglePin(green2_GPIO_Port, green2_Pin);
-				HAL_GPIO_WritePin(red1_GPIO_Port, red2_Pin|red1_Pin|yellow1_Pin, SET);
-				HAL_GPIO_WritePin(yellow2_GPIO_Port, yellow2_Pin, SET);
-				setTimer(25,3);
-			}
-			break;
-		default:
-			break;
-	}
-}
-void timer_2_logic()
-{
-	if(timer_flag[2])
-	{
-		display_val1--;
-		display_val2--;
-		setTimer(100,2);
-	}
-}
-void traffic_state_controller()
-{
-	if(timer_flag[1])
-		{
-			switch (traffic_state)
-			{
-				case 0: // green1 red2
-					HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin| red2_Pin, RESET);
-					HAL_GPIO_WritePin(red1_GPIO_Port, red1_Pin|yellow1_Pin, SET);
-					HAL_GPIO_WritePin(green2_GPIO_Port,green2_Pin|yellow2_Pin, SET);
-					////////////////////////// green1 red2 ON
-					display_val1 = time_green/100;
-					display_val2 = time_red/100;
-					setTimer(100,2);
-					setTimer(time_green,1);
-					traffic_state++;
-					break;
-				case 1:  // yellow1 red2
-					HAL_GPIO_WritePin(yellow1_GPIO_Port, yellow1_Pin|red2_Pin, RESET);
-					HAL_GPIO_WritePin(red1_GPIO_Port, red1_Pin|green1_Pin, SET);
-					HAL_GPIO_WritePin(green2_GPIO_Port, green2_Pin|yellow2_Pin, SET);
-					////////////////////////// yellow1 red2 ON
-					display_val1 = time_yellow/100;
-					setTimer(100,2);
-					setTimer(time_yellow,1);
-					traffic_state++;
-					break;
-				case 2:  //red1 green2
-					HAL_GPIO_WritePin(red1_GPIO_Port, red1_Pin, RESET);
-					HAL_GPIO_WritePin(green2_GPIO_Port, green2_Pin, RESET);
-					HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|yellow1_Pin, SET);
-					HAL_GPIO_WritePin(red2_GPIO_Port, red2_Pin|yellow2_Pin, SET);
-					////////////////////////// red1 green2 ON
-					display_val1 = time_red/100;
-					display_val2 = time_green/100;
-					setTimer(time_green,1);
-					setTimer(100,2);
-					traffic_state++;
-					break;
-				case 3: //red1 yellow2
-					HAL_GPIO_WritePin(red1_GPIO_Port, red1_Pin, RESET);
-					HAL_GPIO_WritePin(yellow2_GPIO_Port, yellow2_Pin, RESET);
-					HAL_GPIO_WritePin(green1_GPIO_Port, green1_Pin|yellow1_Pin|red2_Pin, SET);
-					HAL_GPIO_WritePin(green2_GPIO_Port, green2_Pin, SET);
-					////////////////////////// red1 yellow2 ON
-					setTimer(100,2);
-					setTimer(time_yellow,1);
-					display_val2 = time_yellow/100;
-					traffic_state=0;
-					break;
-				default:
-					traffic_state=0;
-					break;
-			}
-		}
-}
-void setting_led_controller(int mode)
-{
-	if(timer_flag[0])
-		{
-			switch (led_scan_counter)
-			{
-				case 0:
-					HAL_GPIO_WritePin(en1_GPIO_Port, en1_Pin, RESET);
-					HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin|en3_Pin|en4_Pin, SET);
-					display7Seg(mode/10);
-					led_scan_counter++;
-					break;
-				case 1:
-					HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin, RESET);
-					HAL_GPIO_WritePin(en1_GPIO_Port, en1_Pin|en3_Pin|en4_Pin, SET);
-					display7Seg(mode%10);
-					led_scan_counter++;
-					break;
-				case 2:
-					HAL_GPIO_WritePin(en3_GPIO_Port, en3_Pin, RESET);
-					HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin|en1_Pin|en4_Pin, SET);
-					switch (mode) {
-						case 1:
-							display7Seg(time_red / 1000);
-							break;
-						case 2:
-							display7Seg(time_yellow / 1000);
-							break;
-						case 3:
-							display7Seg(time_green / 1000);
-							break;
-						default:
-							break;
-					}
-					led_scan_counter++;
-					break;
-				case 3:
-					HAL_GPIO_WritePin(en4_GPIO_Port, en4_Pin, RESET);
-					HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin|en3_Pin|en1_Pin, SET);
-					switch (mode) {
-						case 1:
-							display7Seg(time_red / 100 %10);
-							break;
-						case 2:
-							display7Seg(time_yellow / 100 %10);
-							break;
-						case 3:
-							display7Seg(time_green / 100 %10);
-							break;
-						default:
-							break;
-					}
-					led_scan_counter=0;
-					break;
-				default:
-					led_scan_counter=0;
-					break;
-			}
-			setTimer(25,0);
-		}
-}
-void led_controller()
-{
-	if(timer_flag[0])
-	{
-		switch (led_scan_counter)
-		{
-			case 0:
-				HAL_GPIO_WritePin(en1_GPIO_Port, en1_Pin, RESET);
-				HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin|en3_Pin|en4_Pin, SET);
-				display7Seg(display_val1/10);
-				led_scan_counter++;
-				break;
-			case 1:
-				HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin, RESET);
-				HAL_GPIO_WritePin(en1_GPIO_Port, en1_Pin|en3_Pin|en4_Pin, SET);
-				display7Seg(display_val1%10);
-				led_scan_counter++;
-				break;
-			case 2:
-				HAL_GPIO_WritePin(en3_GPIO_Port, en3_Pin, RESET);
-				HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin|en1_Pin|en4_Pin, SET);
-				display7Seg(display_val2/10);
-				led_scan_counter++;
-				break;
-			case 3:
-				HAL_GPIO_WritePin(en4_GPIO_Port, en4_Pin, RESET);
-				HAL_GPIO_WritePin(en2_GPIO_Port, en2_Pin|en3_Pin|en1_Pin, SET);
-				display7Seg(display_val2%10);
-				led_scan_counter=0;
-				break;
-			default:
-				led_scan_counter=0;
-				break;
-		}
-		setTimer(25,0);
-	}
-}
-void display7Seg(int decimalVal)
-{
-	if(decimalVal > 9) decimalVal = 0;
-		HAL_GPIO_WritePin(a_GPIO_Port, a_Pin, (decimalVal==1||decimalVal==4) ? SET:RESET);
-		HAL_GPIO_WritePin(b_GPIO_Port, b_Pin, (decimalVal==5||decimalVal==6) ? SET:RESET);
-		HAL_GPIO_WritePin(c_GPIO_Port, c_Pin, (decimalVal==2) ? SET:RESET);
-		HAL_GPIO_WritePin(d_GPIO_Port, d_Pin, (decimalVal==1||decimalVal==4 || decimalVal==7) ? SET:RESET);
-		HAL_GPIO_WritePin(e_GPIO_Port, e_Pin, (decimalVal==1||decimalVal==4 || decimalVal==3 || decimalVal==5 || decimalVal==7 || decimalVal==9) ? SET:RESET);
-		HAL_GPIO_WritePin(f_GPIO_Port, f_Pin, (decimalVal==1||decimalVal==2||decimalVal==3||decimalVal==7) ? SET:RESET);
-		HAL_GPIO_WritePin(g_GPIO_Port, g_Pin, (decimalVal==0||decimalVal==1||decimalVal==7) ? SET:RESET);
 }
 /* USER CODE END 4 */
 
