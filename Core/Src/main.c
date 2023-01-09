@@ -130,10 +130,6 @@ int main(void)
 		  command_paser_fsm();
 		  buffer_flag = 0;
 	  }
-	  if(timer_flag[0])
-	  {
-		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-	  }
 	  uart_communiation_fsm();
   }
   /* USER CODE END 3 */
