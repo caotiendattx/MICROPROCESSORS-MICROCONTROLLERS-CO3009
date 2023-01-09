@@ -64,30 +64,21 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 void uart_communiation_fsm();
 void command_paser_fsm();
-uint8_t temp = 0;
+
 #define MAX_BUFFER_SIZE 30
 uint8_t buffer[MAX_BUFFER_SIZE];
 uint8_t index_buffer = 0;
 uint8_t buffer_flag = 0;
 
-uint8_t data_flag = 0; //for condition to send data
-int state_RST = 0; //for check RST command
-int state_OK = 0; //for check OK command
-uint32_t send_data[30]; //data buffer to send
+uint8_t data_flag = 0; //data ready for send
+int state_RST = 0; // RST state ! -> R -> S -> T -> #
+int state_OK = 0; // OK state ! -> O -> K -> #
+uint32_t send_data[30]; // Data buffer
 uint32_t ADC_value = 0;
 
+uint8_t temp = 0;
 
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	if (huart->Instance == USART2) {
-		buffer[index_buffer++] = temp;
-		HAL_UART_Transmit (& huart2 , & temp , 1 , 50) ;
-		if (index_buffer == 30)
-			index_buffer = 0;
-		buffer_flag = 1;
-		HAL_UART_Receive_IT(&huart2, &temp, 1);
-	}
-}
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef*);
 
 /* USER CODE END 0 */
 
@@ -135,11 +126,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if (buffer_flag == 1) {
+	  if (buffer_flag) {
 		  command_paser_fsm();
 		  buffer_flag = 0;
 	  }
-	  if(timer_flag[0] == 1)
+	  if(timer_flag[0])
 	  {
 		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 	  }
@@ -341,6 +332,22 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	timerRun(0);
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART2) {
+		buffer[index_buffer++] = temp;
+		HAL_UART_Transmit (& huart2 , & temp , 1 , 50) ;
+		if (index_buffer == 30)
+			index_buffer = 0;
+		buffer_flag = 1;
+		HAL_UART_Receive_IT(&huart2, &temp, 1);
+	}
+}
+
 void uart_communiation_fsm() {
 	switch (data_flag) {
 	case 0: //OFF
@@ -363,54 +370,51 @@ void command_paser_fsm() {
 	int index = index_buffer - 1;
 	if (index < 0)
 		index = 29;
-	switch ((char) buffer[index]) {
+	switch ((char) buffer[index_buffer - 1]) {
 		case '!':
 			state_RST = 1;
 			state_OK = 1;
 			break;
+		///////Pattern 1 : RST
 		case 'R':
-			if (state_RST == 1)
-				state_RST = 2;
-			else
-				state_RST = 0;
+			state_RST = (state_RST==1)?2:0;
 			break;
 		case 'S':
-			if (state_RST == 2)
-				state_RST = 3;
-			else
-				state_RST = 0;
+			state_RST = (state_RST==2)?3:0;
 			break;
 		case 'T':
-			if (state_RST == 3)
-				state_RST = 4;
-			else
-				state_RST = 0;
+			state_RST = (state_RST==3)?4:0;
 			break;
+		///////Pattern 2 : OK
 		case 'O':
-			if (state_OK == 1)
-				state_OK = 2;
+			state_OK = (state_OK==1)?2:0;
 			break;
 		case 'K':
-			if (state_OK == 2)
-				state_OK = 3;
+			state_OK = (state_OK==2)?3:0;
 			break;
 		case '#':
-			if (state_RST == 4) {
+			if(state_RST == 4)
+			{
 				data_flag = 1;
 				timer_flag[0] = 1;
-			} else
+			}
+			else
 				state_RST = 0;
+
 			if (state_OK == 3)
+			{
 				data_flag = 0;
+			}
 			break;
 		default:
 			break;
 	}
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	timerRun(0);
-}
+
+
+
+
 /* USER CODE END 4 */
 
 /**
